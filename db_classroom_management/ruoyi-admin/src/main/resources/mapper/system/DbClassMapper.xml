@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DbClassMapper">
+    
+    <resultMap type="DbClass" id="DbClassResult">
+        <result property="cId"    column="c_id"    />
+        <result property="cName"    column="c_name"    />
+        <result property="cKind"    column="c_kind"    />
+        <result property="cSeat"    column="c_seat"    />
+        <result property="cStatus"    column="c_status"    />
+    </resultMap>
+
+    <sql id="selectDbClassVo">
+        select c_id, c_name, c_kind, c_seat, c_status from db_class
+    </sql>
+
+    <select id="selectDbClassList" parameterType="DbClass" resultMap="DbClassResult">
+        <include refid="selectDbClassVo"/>
+        <where>  
+            <if test="cName != null  and cName != ''"> and c_name like concat('%', #{cName}, '%')</if>
+            <if test="cKind != null  and cKind != ''"> and c_kind = #{cKind}</if>
+            <if test="cSeat != null "> and c_seat = #{cSeat}</if>
+            <if test="cStatus != null  and cStatus != ''"> and c_status = #{cStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectDbClassByCId" parameterType="Long" resultMap="DbClassResult">
+        <include refid="selectDbClassVo"/>
+        where c_id = #{cId}
+    </select>
+        
+    <insert id="insertDbClass" parameterType="DbClass" useGeneratedKeys="true" keyProperty="cId">
+        insert into db_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cName != null and cName != ''">c_name,</if>
+            <if test="cKind != null and cKind != ''">c_kind,</if>
+            <if test="cSeat != null">c_seat,</if>
+            <if test="cStatus != null and cStatus != ''">c_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cName != null and cName != ''">#{cName},</if>
+            <if test="cKind != null and cKind != ''">#{cKind},</if>
+            <if test="cSeat != null">#{cSeat},</if>
+            <if test="cStatus != null and cStatus != ''">#{cStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDbClass" parameterType="DbClass">
+        update db_class
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cName != null and cName != ''">c_name = #{cName},</if>
+            <if test="cKind != null and cKind != ''">c_kind = #{cKind},</if>
+            <if test="cSeat != null">c_seat = #{cSeat},</if>
+            <if test="cStatus != null and cStatus != ''">c_status = #{cStatus},</if>
+        </trim>
+        where c_id = #{cId}
+    </update>
+
+    <delete id="deleteDbClassByCId" parameterType="Long">
+        delete from db_class where c_id = #{cId}
+    </delete>
+
+    <delete id="deleteDbClassByCIds" parameterType="String">
+        delete from db_class where c_id in 
+        <foreach item="cId" collection="array" open="(" separator="," close=")">
+            #{cId}
+        </foreach>
+    </delete>
+</mapper>

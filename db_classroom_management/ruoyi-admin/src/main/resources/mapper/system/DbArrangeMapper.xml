@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DbArrangeMapper">
+    
+    <resultMap type="DbArrange" id="DbArrangeResult">
+        <result property="aId"    column="a_id"    />
+        <result property="cId"    column="c_id"    />
+        <result property="cName"    column="c_name"    />
+        <result property="crNo"    column="cr_no"    />
+        <result property="crTeachername"    column="cr_teachername"    />
+        <result property="aWeek"    column="a_week"    />
+        <result property="aTime"    column="a_time"    />
+    </resultMap>
+
+    <sql id="selectDbArrangeVo">
+        select a_id, c_id, c_name, cr_no, cr_teachername, a_week, a_time from db_arrange
+    </sql>
+
+    <select id="selectDbArrangeList" parameterType="DbArrange" resultMap="DbArrangeResult">
+        <include refid="selectDbArrangeVo"/>
+        <where>  
+            <if test="cId != null  and cId != ''"> and c_id = #{cId}</if>
+            <if test="cName != null  and cName != ''"> and c_name like concat('%', #{cName}, '%')</if>
+            <if test="crNo != null "> and cr_no = #{crNo}</if>
+            <if test="crTeachername != null  and crTeachername != ''"> and cr_teachername like concat('%', #{crTeachername}, '%')</if>
+            <if test="aWeek != null "> and a_week = #{aWeek}</if>
+            <if test="aTime != null  and aTime != ''"> and a_time = #{aTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectDbArrangeByAId" parameterType="Long" resultMap="DbArrangeResult">
+        <include refid="selectDbArrangeVo"/>
+        where a_id = #{aId}
+    </select>
+        
+    <insert id="insertDbArrange" parameterType="DbArrange" useGeneratedKeys="true" keyProperty="aId">
+        insert into db_arrange
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cId != null and cId != ''">c_id,</if>
+            <if test="cName != null and cName != ''">c_name,</if>
+            <if test="crNo != null">cr_no,</if>
+            <if test="crTeachername != null and crTeachername != ''">cr_teachername,</if>
+            <if test="aWeek != null">a_week,</if>
+            <if test="aTime != null and aTime != ''">a_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cId != null and cId != ''">#{cId},</if>
+            <if test="cName != null and cName != ''">#{cName},</if>
+            <if test="crNo != null">#{crNo},</if>
+            <if test="crTeachername != null and crTeachername != ''">#{crTeachername},</if>
+            <if test="aWeek != null">#{aWeek},</if>
+            <if test="aTime != null and aTime != ''">#{aTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDbArrange" parameterType="DbArrange">
+        update db_arrange
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cId != null and cId != ''">c_id = #{cId},</if>
+            <if test="cName != null and cName != ''">c_name = #{cName},</if>
+            <if test="crNo != null">cr_no = #{crNo},</if>
+            <if test="crTeachername != null and crTeachername != ''">cr_teachername = #{crTeachername},</if>
+            <if test="aWeek != null">a_week = #{aWeek},</if>
+            <if test="aTime != null and aTime != ''">a_time = #{aTime},</if>
+        </trim>
+        where a_id = #{aId}
+    </update>
+
+    <delete id="deleteDbArrangeByAId" parameterType="Long">
+        delete from db_arrange where a_id = #{aId}
+    </delete>
+
+    <delete id="deleteDbArrangeByAIds" parameterType="String">
+        delete from db_arrange where a_id in 
+        <foreach item="aId" collection="array" open="(" separator="," close=")">
+            #{aId}
+        </foreach>
+    </delete>
+</mapper>

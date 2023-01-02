@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DbCourseMapper">
+    
+    <resultMap type="DbCourse" id="DbCourseResult">
+        <result property="crNo"    column="cr_no"    />
+        <result property="crCno"    column="cr_cno"    />
+        <result property="crName"    column="cr_name"    />
+        <result property="crTeachername"    column="cr_teachername"    />
+        <result property="crTeacherid"    column="cr_teacherid"    />
+        <result property="crNumber"    column="cr_number"    />
+    </resultMap>
+
+    <sql id="selectDbCourseVo">
+        select cr_no, cr_cno, cr_name, cr_teachername, cr_teacherid, cr_number from db_course
+    </sql>
+
+    <select id="selectDbCourseList" parameterType="DbCourse" resultMap="DbCourseResult">
+        <include refid="selectDbCourseVo"/>
+        <where>  
+            <if test="crCno != null  and crCno != ''"> and cr_cno = #{crCno}</if>
+            <if test="crName != null  and crName != ''"> and cr_name like concat('%', #{crName}, '%')</if>
+            <if test="crTeachername != null  and crTeachername != ''"> and cr_teachername like concat('%', #{crTeachername}, '%')</if>
+            <if test="crTeacherid != null  and crTeacherid != ''"> and cr_teacherid = #{crTeacherid}</if>
+            <if test="crNumber != null "> and cr_number = #{crNumber}</if>
+        </where>
+    </select>
+    
+    <select id="selectDbCourseByCrNo" parameterType="Long" resultMap="DbCourseResult">
+        <include refid="selectDbCourseVo"/>
+        where cr_no = #{crNo}
+    </select>
+        
+    <insert id="insertDbCourse" parameterType="DbCourse" useGeneratedKeys="true" keyProperty="crNo">
+        insert into db_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="crCno != null and crCno != ''">cr_cno,</if>
+            <if test="crName != null and crName != ''">cr_name,</if>
+            <if test="crTeachername != null and crTeachername != ''">cr_teachername,</if>
+            <if test="crTeacherid != null and crTeacherid != ''">cr_teacherid,</if>
+            <if test="crNumber != null">cr_number,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="crCno != null and crCno != ''">#{crCno},</if>
+            <if test="crName != null and crName != ''">#{crName},</if>
+            <if test="crTeachername != null and crTeachername != ''">#{crTeachername},</if>
+            <if test="crTeacherid != null and crTeacherid != ''">#{crTeacherid},</if>
+            <if test="crNumber != null">#{crNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDbCourse" parameterType="DbCourse">
+        update db_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="crCno != null and crCno != ''">cr_cno = #{crCno},</if>
+            <if test="crName != null and crName != ''">cr_name = #{crName},</if>
+            <if test="crTeachername != null and crTeachername != ''">cr_teachername = #{crTeachername},</if>
+            <if test="crTeacherid != null and crTeacherid != ''">cr_teacherid = #{crTeacherid},</if>
+            <if test="crNumber != null">cr_number = #{crNumber},</if>
+        </trim>
+        where cr_no = #{crNo}
+    </update>
+
+    <delete id="deleteDbCourseByCrNo" parameterType="Long">
+        delete from db_course where cr_no = #{crNo}
+    </delete>
+
+    <delete id="deleteDbCourseByCrNos" parameterType="String">
+        delete from db_course where cr_no in 
+        <foreach item="crNo" collection="array" open="(" separator="," close=")">
+            #{crNo}
+        </foreach>
+    </delete>
+</mapper>
